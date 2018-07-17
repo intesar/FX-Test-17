@@ -1,0 +1,120 @@
+
+---
+version: '1'
+
+# App (Project) name
+name: FX-Sample
+
+# App description
+description: FX Testing.
+
+# license
+licenses:
+  - APACHE LICENSE, VERSION 2.
+
+imports:
+  # Importing DataSets from Marketplace.
+  '@USName': FXLabs/Common/US-Names
+
+  # SQL Injection Strings
+  '@GenericSQLInjections': FXLabs/Common/Generic-SQLInjections
+  '@OracleSQLInjections': FXLabs/Common/Oracle-SQLInjections
+  '@PostgresSQLInjections': FXLabs/Common/Postgres-SQLInjections
+  '@SQLServerSQLInjections': FXLabs/Common/SQLServer-SQLInjections
+  '@MySQLSQLInjections': FXLabs/Common/MySQL-SQLInjections
+  '@MySQLTimeboundSQLInjections': FXLabs/Common/MySQL-TimeBound-SQL_Injection_Strings
+  '@PostgresTimeboundSQLInjections': FXLabs/Common/PostGreSQL-TimeBound-SQL_Injection_Strings
+  '@SQLServerTimeboundSQLInjections': FXLabs/Common/SQLServer-TimeBound-SQL_Injection_Strings
+  '@OracleTimeboundSQLInjections': FXLabs/Common/Oracle-TimeBound-SQL_Injection_Strings
+
+  # No-SQL DB Injection String
+  '@MongoDBSQLInjections': FXLabs/Common/MongoDB-SQLInjections
+  '@MongoDBTimeboundSQLInjections': FXLabs/Common/MongoDB-TimeBound-SQL_Injection_Strings
+
+  # Cross-Site Scripting Injection Strings
+  '@XSSSQLInjections': FXLabs/Common/XSS
+
+
+# App environments
+environments:
+  - name: Dev
+    baseUrl: <<changeme>>
+    # app access credentials
+    auths:
+      - name: Default
+        # authType: Basic, OAuth_2_0, Token
+        authType: Basic
+        username: <<changeme>>
+        password: <<changeme>>
+        # Inject password from FX Vault
+        #password: '{{@Vault.FxLabs/Stg-Admin-Pass}}'
+      # Used by in-valid credential security workflow.
+      - name: INVALID_AUTH
+        authType: Basic
+        username: invalid@example.com
+        # either username or password or both can be invalid.
+        password: invalid-pass
+
+# e.g. second environment.        
+#     - name: QE
+#       # base URL
+#       baseUrl: http://qe.fxlabs.io/api/v1
+#       # app access credentials
+#       auths:
+#        - name: Default
+#          # authType: Basic, OAuth_2_0, Token
+#          authType: Basic
+#          username: username@example.com
+#          password: mypassword
+#      #OAuth 2.0 Example
+#      - name: Stg
+#        authType: OAuth_2_0
+#        grantType: password                # (e.g. authorization_code, implicit, client_credentials, password)
+#        username: peter@example.com        # Optional - Only applies if grantType == password
+#        password: password                 # Optional - Only applies if grantType == password
+#        clientId: gigy                     #
+#        clientSecret: secret               #
+#        id: some-id                        # Optional | unique random string
+#        accessTokenUri: http://<>/token    #
+#        userAuthorizationUri:              # Optional
+#        clientAuthenticationScheme: form   # (e.g. form,header,none,query)
+#        authorizationScheme: form          # (e.g. form,header,none,query)
+#        scope: read,write
+#      #Token Example
+#      - name: Stg
+#        authType: Token
+#        header_1: 'cookie: JWTTOKEN=Token' # (e.g. 1)
+#        header_1: 'Authorization: <type> <credentials>' # (e.g. 2)
+
+
+
+# Job profiles
+jobs:
+  - name: Dev
+    # refers the the env defined above
+    environment: Dev
+    tags:
+      - V1
+    # Bot regions - https://cloud.fxlabs.io/#/app/superbotnetwork
+    regions: FXLabs/US_WEST_1
+    # 0 15 10 ? * * -> Fire at 10:15am every day
+    cron: '0 15 10 ? * *'
+    issueTracker: 
+      name: Dev-IssueTracker
+      # e.g. https://github.com/shoukathmd/courseapo
+      url: <<changeme>>
+      account: Default_GitHub
+    notifications: 
+      - name: Dev-Slack-Notification
+        channel: <<changeme>>
+        account: Default_Slack
+      - name: Dev-Email-Notification
+        # enter your email
+        to: <<changeme>>
+        account: Default_Email
+
+# e.g. second job.
+#  - name: SANDBOX
+#    environment: Stg
+#    tags:
+#      - SANDBOX
